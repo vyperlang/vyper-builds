@@ -33,6 +33,7 @@ jobs:
       - name: Checkout the 'builds' branch
         run: |
           git checkout builds
+          git merge main
 
       - name: Fetch
         run: python fetch.py
