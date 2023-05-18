@@ -9,6 +9,7 @@ if __name__ == "__main__":
 
     # use token not for permissions but because it improves rate limiting
     TOKEN = os.environ["GITHUB_TOKEN"]
+    print(TOKEN)
 
     s = requests.Session()
     s.headers["Accept"] = "application/vnd.github+json"
@@ -19,7 +20,7 @@ if __name__ == "__main__":
 
     artifacts = s.get(URL("/actions/artifacts?per_page=100")).json()["artifacts"]
 
-    changes = False
+    changes = 0
 
     for a in artifacts:
         workflow_run = a["workflow_run"]["id"]
@@ -67,8 +68,8 @@ if __name__ == "__main__":
         os.rename(tmp_directory, output_directory)
         print(f"successfully fetched {output_directory}", file=sys.stderr)
 
-        changes = True
+        changes += 1
 
-    if not changes:
+    if changes == 0:
         print("No files fetched.", file=sys.stderr)
         os.exit(1)
