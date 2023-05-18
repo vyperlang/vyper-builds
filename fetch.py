@@ -9,7 +9,6 @@ if __name__ == "__main__":
 
     # use token not for permissions but because it improves rate limiting
     TOKEN = os.environ["GITHUB_TOKEN"]
-    print(TOKEN)
 
     s = requests.Session()
     s.headers["Accept"] = "application/vnd.github+json"
@@ -18,13 +17,17 @@ if __name__ == "__main__":
     def URL(uri):
         return f"https://api.github.com/repos/vyperlang/vyper{uri}"
 
-    artifacts = s.get(URL("/actions/artifacts?per_page=100")).json()["artifacts"]
+    r = s.get(URL("/actions/artifacts?per_page=100"))
+    r.raise_for_status()
+    artifacts = r.json()["artifacts"]
 
     changes = 0
 
     for a in artifacts:
         workflow_run = a["workflow_run"]["id"]
-        workflow_info = s.get(URL(f"/actions/runs/{workflow_run}")).json()
+        r = s.get(URL(f"/actions/runs/{workflow_run}"))
+        r.raise_for_status
+        workflow_info = r.json()
 
         if workflow_info["event"] != "push":
             print(f"run {workflow_run} is not a push to master", file=sys.stderr)
@@ -57,6 +60,7 @@ if __name__ == "__main__":
         print(f"fetching {directory_part} ...", file=sys.stderr)
         artifact_id = a["id"]
         r = s.get(URL(f"/actions/artifacts/{artifact_id}/zip"), stream=True)
+        r.raise_for_status()
 
         os.makedirs(tmp_directory, exist_ok=True)
         with zipfile.ZipFile(io.BytesIO(r.content)) as z:
