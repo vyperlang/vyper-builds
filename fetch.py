@@ -8,7 +8,7 @@ import io
 if __name__ == "__main__":
 
     # use token not for permissions but because it improves rate limiting
-    TOKEN = os.env["GITHUB_TOKEN"]
+    TOKEN = os.environ["GITHUB_TOKEN"]
 
     s = requests.Session()
     s.headers["Accept"] = "application/vnd.github+json"
