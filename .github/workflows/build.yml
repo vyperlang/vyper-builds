@@ -30,6 +30,8 @@ jobs:
 
       - name: Fetch
         run: python fetch.py
+        env:
+          GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
       - name: Commit and push
