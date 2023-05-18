@@ -1,0 +1,38 @@
+name: vyper-builds
+
+permissions:
+  contents: write
+
+on:
+  workflow_dispatch:
+  schedule:
+    # every 3 hours on the 19th minute
+    - cron: "19 */3 * * *"
+
+jobs:
+  build:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+
+      - uses: actions/setup-python@v4
+        with:
+          python-version: "3.11"
+
+      - name: Install dependencies
+        run: |
+          sudo apt-get update
+          sudo apt-get install -y -q git
+
+      - name: Fetch
+        run: python fetch.py
+        continue-on-error: true
+
+      - name: Commit and push
+        if: ${{ success() }}
+        run: |
+          git config --global user.name "commit bot"
+          git config --global user.email "commit-bot@users.noreply.github.com"
+          git add builds/
+          git commit -m "add binaries"
+          git push
