@@ -18,8 +18,12 @@ jobs:
       - uses: actions/setup-python@v4
         with:
           python-version: "3.11"
+          cache: "pip"
 
-      - name: Install dependencies
+      - name: Install python dependencies
+        run: pip install -r requirements.txt
+
+      - name: Install dependencies via apt-get
         run: |
           sudo apt-get update -q
           sudo apt-get install -y -q git
