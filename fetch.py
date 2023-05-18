@@ -45,7 +45,7 @@ if __name__ == "__main__":
         commit_info = workflow_info["head_commit"]
         commit_time = datetime.datetime.fromisoformat(commit_info["timestamp"])
         commit_hash = commit_info["id"]
-        short_commit_hash = commit_hash[12:]
+        short_commit_hash = commit_hash[:16]
 
         # sorted by time of day.
         commit_id = commit_time.strftime("%H:%M:%SZ-") + short_commit_hash
