@@ -12,7 +12,7 @@ if __name__ == "__main__":
 
     s = requests.Session()
     s.headers["Accept"] = "application/vnd.github+json"
-    s.headers["Authorization"] = "Bearer {TOKEN}"
+    s.headers["Authorization"] = f"Bearer {TOKEN}"
 
     def URL(uri):
         return f"https://api.github.com/repos/vyperlang/vyper{uri}"
