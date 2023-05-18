@@ -28,6 +28,10 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y -q git
 
+      - name: Checkout the 'builds' branch
+        run: |
+          git checkout builds
+
       - name: Fetch
         run: python fetch.py
         env:
