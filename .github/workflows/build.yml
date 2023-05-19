@@ -25,11 +25,6 @@ jobs:
       - name: Install python dependencies
         run: pip install -r requirements.txt
 
-      - name: Install dependencies via apt-get
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -y -q git
-
       - name: Configure git
         run: |
           git config --global user.name "vyper commit bot"
@@ -45,11 +40,6 @@ jobs:
         env:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
-
-      #- name: Clean symlinks
-      #  # clean bad symlinks that were created in the previous step
-      #  # https://unix.stackexchange.com/a/314975
-      #  run: find releases/ -xtype l -delete
 
       - name: Commit and push
         run: |
