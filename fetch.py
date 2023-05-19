@@ -95,6 +95,7 @@ if __name__ == "__main__":
             target_path = f"{output_dir}/{filename}"
             if os.path.exists(target_path):
                 print(f"{target_path} exists, skipping ...", file=sys.stderr)
+                continue
             print(f"fetching {filename}", file=sys.stderr)
             r = s.get(asset["browser_download_url"])
             r.raise_for_status()
