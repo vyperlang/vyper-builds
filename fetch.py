@@ -38,8 +38,8 @@ if __name__ == "__main__":
         commit_hash = commit_info["id"]
         short_commit_hash = commit_hash[:16]
 
-        # sorted by time of day.
-        commit_id = commit_time.strftime("%H:%M:%SZ-") + short_commit_hash
+        shortname = f"{commit_info['timestamp']}-{short_commit_hash}"
+
 
         if workflow_info["event"] != "push":
             print(f"run {workflow_run} ({commit_id}) is not a push to master", file=sys.stderr)
@@ -57,6 +57,8 @@ if __name__ == "__main__":
             print(f"run {workflow_run} ({commit_id}) expired", file=sys.stderr)
             continue
 
+        # sorted by time of day.
+        commit_id = commit_time.strftime("%H:%M:%SZ-") + short_commit_hash
         # extract into ./builds/2023/03/30/12:30:05Z-6307049f071a8f5857777c87bb5d858d28112acf/
         date_part = commit_time.strftime("%Y/%m/%d")
         directory_part = f"{date_part}/{commit_id}/"
@@ -91,7 +93,7 @@ if __name__ == "__main__":
 
         for asset in release["assets"]:
             filename = asset["name"]
-            if os.exists(target_path):
+            if os.path.exists(target_path):
                 print(f"{target_path} exists, skipping ...", file=sys.stderr)
             print(f"fetching {filename}", file=sys.stderr)
             r = s.get(asset["browser_download_url"])
