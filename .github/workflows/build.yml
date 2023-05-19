@@ -43,7 +43,7 @@ jobs:
 
       - name: Commit and push
         run: |
-          git add builds/ releases/
+          git add all-commits/ releases/
           # swallow git "nothing added to commit" error; we might have
           # a merge commit which we want to push.
           git commit -m "add binaries" || echo "no new binaries" 1>&2
