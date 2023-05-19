@@ -25,11 +25,6 @@ jobs:
       - name: Install python dependencies
         run: pip install -r requirements.txt
 
-      - name: Install dependencies via apt-get
-        run: |
-          sudo apt-get update -q
-          sudo apt-get install -y -q git
-
       - name: Configure git
         run: |
           git config --global user.name "vyper commit bot"
