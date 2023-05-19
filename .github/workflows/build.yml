@@ -30,6 +30,11 @@ jobs:
           sudo apt-get update -q
           sudo apt-get install -y -q git
 
+      - name: Configure git
+        run: |
+          git config --global user.name "vyper commit bot"
+          git config --global user.email "vyper-bot@users.noreply.github.com"
+
       - name: Checkout the 'builds' branch
         run: |
           git checkout builds
@@ -41,11 +46,14 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
+      #- name: Clean symlinks
+      #  # clean bad symlinks that were created in the previous step
+      #  # https://unix.stackexchange.com/a/314975
+      #  run: find releases/ -xtype l -delete
+
       - name: Commit and push
-        if: ${{ success() }}
         run: |
-          git config --global user.name "vyper commit bot"
-          git config --global user.email "vyper-bot@users.noreply.github.com"
-          git add builds/
+          git add builds/ releases/
           git commit -m "add binaries"
           git push
+        continue-on-error: true
