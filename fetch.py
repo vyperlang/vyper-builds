@@ -91,11 +91,16 @@ if __name__ == "__main__":
 
         for asset in release["assets"]:
             filename = asset["name"]
+            if os.exists(target_path):
+                print(f"{target_path} exists, skipping ...", file=sys.stderr)
+            print(f"fetching {filename}", file=sys.stderr)
             r = s.get(asset["browser_download_url"])
             r.raise_for_status()
             target_path = f"{output_dir}/{filename}"
             with open(target_path, "wb") as f:
                 f.write(r.content)
+            print(f"{filename} fetched to {target_path}", file=sys.stderr)
+            changes += 1
 
     if changes == 0:
         print("No files fetched.", file=sys.stderr)
