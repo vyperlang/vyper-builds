@@ -23,14 +23,7 @@ if __name__ == "__main__":
 
     r = s.get(URL("/releases?per_page=100"))
     r.raise_for_status()
-    release_tags = {x["tag_name"]: x for x in r.json()}
-
-    r = s.get(URL("/tags?per_page=100"))
-    r.raise_for_status()
-    # {name: v0.3.7, commit: {sha: ..., ...}, ...}
-    gh_tags = r.json()
-
-    releases_by_commit = {t["commit"]["sha"]: t for t in gh_tags if t["name"] in release_tags}
+    releases = r.json()
 
     changes = 0
 
@@ -66,17 +59,6 @@ if __name__ == "__main__":
         output_directory = f"builds/{directory_part}/"
         tmp_directory = f"tmp/{date_part}/"
 
-        # if the commit is a release, make a symlink from releases/
-        # directory to the builds/ directory.
-        # (don't bother writing logic to figure out if the extract
-        # was successful or anything like that. just clean up symlinks
-        # later.)
-        if commit_hash in releases_by_commit:
-            release_tagname = releases_by_commit[commit_hash]["name"]
-            print(f"found a release! {release_tagname} => {commit_hash}", file=sys.stderr)
-            os.makedirs("releases/", exist_ok=True)
-            os.symlink(f"releases/{release_tagname}", output_directory)
-
         if os.path.exists(output_directory):
             print(f"{output_directory} exists, skipping...", file=sys.stderr)
             continue
@@ -97,6 +79,19 @@ if __name__ == "__main__":
         print(f"successfully fetched {output_directory}", file=sys.stderr)
 
         changes += 1
+
+    for release in releases:
+        tag_name = release["tag_name"]
+        output_dir = f"releases/{tag_name}"
+        os.makedirs(output_dir, exist_ok=True)
+
+        for asset in release["assets"]:
+            filename = asset["name"]
+            r = s.get(asset["browser_download_url"])
+            r.raise_for_status()
+            target_path = f"{output_dir}/{filename}"
+            with open(target_path, "wb") as f:
+                f.write(r.content)
 
     if changes == 0:
         print("No files fetched.", file=sys.stderr)
