@@ -33,19 +33,6 @@ if __name__ == "__main__":
         r.raise_for_status
         workflow_info = r.json()
 
-        if workflow_info["event"] != "push":
-            print(f"run {workflow_run} is not a push to master", file=sys.stderr)
-            continue
-        if workflow_info["status"] != "completed":
-            print(f"run {workflow_run} is not complete", file=sys.stderr)
-            continue
-        if workflow_info["conclusion"] != "success":
-            print(f"run {workflow_run} was not successful", file=sys.stderr)
-            continue
-        if workflow_info["head_branch"] != "master":
-            print(f"run {workflow_run} is not master", file=sys.stderr)
-            continue
-
         commit_info = workflow_info["head_commit"]
         commit_time = datetime.datetime.fromisoformat(commit_info["timestamp"])
         commit_hash = commit_info["id"]
@@ -53,6 +40,23 @@ if __name__ == "__main__":
 
         # sorted by time of day.
         commit_id = commit_time.strftime("%H:%M:%SZ-") + short_commit_hash
+
+        if workflow_info["event"] != "push":
+            print(f"run {workflow_run} ({commit_id}) is not a push to master", file=sys.stderr)
+            continue
+        if workflow_info["status"] != "completed":
+            print(f"run {workflow_run} ({commit_id}) is not complete", file=sys.stderr)
+            continue
+        if workflow_info["conclusion"] != "success":
+            print(f"run {workflow_run} ({commit_id}) was not successful", file=sys.stderr)
+            continue
+        if workflow_info["head_branch"] != "master":
+            print(f"run {workflow_run} ({commit_id}) is not master", file=sys.stderr)
+            continue
+        if a["expired"] is True:
+            print(f"run {workflow_run} ({commit_id}) expired", file=sys.stderr)
+            continue
+
         # extract into ./builds/2023/03/30/12:30:05Z-6307049f071a8f5857777c87bb5d858d28112acf/
         date_part = commit_time.strftime("%Y/%m/%d")
         directory_part = f"{date_part}/{commit_id}/"
@@ -65,7 +69,7 @@ if __name__ == "__main__":
 
         print(f"fetching {directory_part} ...", file=sys.stderr)
         artifact_id = a["id"]
-        r = s.get(URL(f"/actions/artifacts/{artifact_id}/zip"), stream=True)
+        r = s.get(URL(f"/actions/artifacts/{artifact_id}/zip"))
         r.raise_for_status()
 
         os.makedirs(tmp_directory, exist_ok=True)
