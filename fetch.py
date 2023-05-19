@@ -106,4 +106,4 @@ if __name__ == "__main__":
 
     if changes == 0:
         print("No files fetched.", file=sys.stderr)
-        os.exit(1)
+        sys.exit(1)
