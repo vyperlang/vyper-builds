@@ -58,10 +58,10 @@ if __name__ == "__main__":
 
         # sorted by time of day.
         commit_id = commit_time.strftime("%H-%M-%SZ-") + short_commit_hash
-        # extract into ./builds/2023/03/30/12:30:05Z-6307049f071a8f5857777c87bb5d858d28112acf/
+        # extract into ./all-commits/2023/03/30/12:30:05Z-6307049f071a8f5857777c87bb5d858d28112acf/
         date_part = commit_time.strftime("%Y/%m/%d")
         directory_part = f"{date_part}/{commit_id}/"
-        output_directory = f"builds/{directory_part}/"
+        output_directory = f"all-commits/{directory_part}/"
         tmp_directory = f"tmp/{date_part}/"
 
         if os.path.exists(output_directory):
