@@ -46,11 +46,10 @@ jobs:
           GITHUB_TOKEN: ${{ secrets.GITHUB_TOKEN }}
         continue-on-error: true
 
-      - name: Clean symlinks
-        # clean bad symlinks that were created in the previous step
-        # https://unix.stackexchange.com/a/314975
-        run: find . -xtype l -delete releases/
-
+      #- name: Clean symlinks
+      #  # clean bad symlinks that were created in the previous step
+      #  # https://unix.stackexchange.com/a/314975
+      #  run: find releases/ -xtype l -delete
 
       - name: Commit and push
         run: |
