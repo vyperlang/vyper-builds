@@ -82,6 +82,7 @@ if __name__ == "__main__":
 
         os.rename(tmp_directory, output_directory)
         print(f"successfully fetched {output_directory}", file=sys.stderr)
+        latest_target = output_directory
 
         changes += 1
 
@@ -102,8 +103,12 @@ if __name__ == "__main__":
             with open(target_path, "wb") as f:
                 f.write(r.content)
             print(f"{filename} fetched to {target_path}", file=sys.stderr)
+            latest_target = output_dir
+
             changes += 1
 
     if changes == 0:
         print("No files fetched.", file=sys.stderr)
         sys.exit(1)
+
+    sys.stdout.write(f"through {latest_target}")
